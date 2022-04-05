@@ -1,0 +1,9 @@
+<ID, ali>
+<ID, r>
+<ID, sdklfj34>
+<ID, hamireza>
+<ID, ali_mvd>
+<String, "ali   1234">
+<String, "mosatsdfj 234   ">
+<ID, sdlkfj>
+<String, " ">
