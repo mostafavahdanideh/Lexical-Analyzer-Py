@@ -1,9 +1,8 @@
-<ID, ali>
-<ID, r>
-<ID, sdklfj34>
-<ID, hamireza>
-<ID, ali_mvd>
-<String, "ali   1234">
-<String, "mosatsdfj 234   ">
-<ID, sdlkfj>
-<String, " ">
+<ID, ali, (1, (1, 3))>
+<ID, r, (1, (30, 30))>
+<ID, skdlfj34, (2, (1, 8))>
+<ID, sdfdf, (2, (24, 28))>
+<ID, sdf, (2, (37, 39))>
+<ID, hamireza, (2, (41, 48))>
+<ID, ali_mvd, (3, (1, 7))>
+<STRING, "ali   1234", (3, (9, 19))>

@@ -1,3 +1,5 @@
-<ID, reza., 1>
-<ID, skdlfj3#, 1>
-<ID, slfj3", 2>
+<ID, reza., (1, (6, 11)), .>
+<INVALID_CHAR, $...;, (1, (12, 27)), $>
+<ID, sdklfj34#, (2, (11, 22)), #>
+<INVALID_CHAR, $...;, (4, (21, 35)), $>
+<STRING, "sddf &, (4, (37, 'EOF')), &>
