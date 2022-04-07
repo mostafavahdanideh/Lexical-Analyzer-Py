@@ -18,7 +18,9 @@ def write_error(type, value, location, error_char):
 
 
 def is_invalid_char(char):
-    if char in ["#", "$", "~", "`"]:
+    decimal_ascii_code = ord(char)
+    # invalid chars are -> [#, $, ~, `]
+    if decimal_ascii_code in [35, 36, 126, 96]:
         return True
     return False
 
@@ -59,19 +61,24 @@ def is_under_line(char):
 
 def is_dot(char):
     decimal_ascii_code = ord(char)
-    
+
     if decimal_ascii_code == 46:
         return True
     return False
 
 
 def reach_to_special_char(char):
+    # special chars are -> [";", "{", ":"]
     while char:
-        if char in [";", "{", ":"]:
+        decimal_ascii_code = ord(char)
+
+        if decimal_ascii_code in [59, 123, 58]:
             break
+        
         elif end_of_chars_list():
             EOF = globals.Globals.EOF.value
             return EOF
+
         char = next_char_tpl()[0]
 
 
