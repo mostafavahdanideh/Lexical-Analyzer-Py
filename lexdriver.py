@@ -1,13 +1,15 @@
 
-
-from utils import next_token, write_error, write_token
-from globals import Globals
+import globals
+from utils import write_error, write_token
+from tokenization import next_token
 
 
 def main():
     idx = 0
 
-    while idx < Globals.LEN_CHARACTER_LIST.value - 1:
+    LEN_CHARACTER_LIST = globals.LEN_CHARACTER_LIST
+
+    while idx < LEN_CHARACTER_LIST - 1:
         
         next_token_tpl = next_token()
         created_token_obj = next_token_tpl[1]
