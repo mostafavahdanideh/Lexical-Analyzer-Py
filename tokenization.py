@@ -1,7 +1,8 @@
 
 
+from logging import getLoggerClass
 import globals
-from utils import (is_digit, is_letter, is_under_line, 
+from utils import (is_digit, is_letter, is_slash, is_star, is_under_line, 
                     end_of_chars_list, next_char_tpl, next_idx,
                     is_dot, is_quotation, is_invalid_char, is_space,
                     make_up_token_value, error_token_location, token_location,
@@ -229,6 +230,44 @@ def match_number_token(char):
         return match_float_token(integer_value_before_dot, char)
 
 
+def match_pow_or_multiply(char):
+    "Match multiply or pow"
+
+    value = char
+    char = next_char_tpl()[0]
+    value += char
+    start_token_pointer = globals.pointer_digit
+    MULTIPLY = globals.Globals.MULTIPLY.name
+    POW = globals.Globals.POW.name
+    INVALID_CHAR = globals.Globals.INVALID_CHAR.value
+    COMMENT = globals.Globals.COMMENT.value
+
+    if is_star(char):
+        location_tpl = token_location(start_token_pointer)
+        return Token(POW, value, location_tpl, False)
+    elif is_slash(char):
+        while not(is_slash(char)):
+            char = next_char_tpl()[0]
+        if is_star(char):
+            next_idx()
+        else:
+            location_tpl = error_token_location(
+                start_token_pointer, char)
+            return ErrorToken(COMMENT, value, location_tpl, True, char)
+    elif is_invalid_char(char):
+        location_tpl = error_token_location(
+            start_token_pointer, char)
+        return ErrorToken(INVALID_CHAR, value, location_tpl, True, char)
+    else:
+        location_tpl = token_location(start_token_pointer)
+        value = value[:len(value) - 1]
+        return Token(MULTIPLY, value, location_tpl, False)
+
+
+def match_divider(char):
+    pass
+
+
 def next_token():
     "Get next token, create then return it."
 
@@ -245,6 +284,12 @@ def next_token():
 
     elif is_digit(char):
         matched_token = match_number_token(char)
+    
+    elif is_star(char):
+        matched_token = match_pow_or_multiply(char)
+    
+    elif is_slash(char):
+        matched_token = match_divider(char)
 
     else:
         next_idx()

@@ -74,7 +74,7 @@ def reach_to_special_char(char):
 
         if decimal_ascii_code in [59, 123, 58]:
             break
-        
+
         elif end_of_chars_list():
             EOF = globals.Globals.EOF.value
             return EOF
@@ -200,4 +200,20 @@ def is_reserved_id(value):
     if value in RESERVED_IDS:
         return True
         
+    return False
+
+
+def is_star(char):
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 42:
+        return True
+    return False
+
+
+def is_slash(char):
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 47:
+        return True
     return False

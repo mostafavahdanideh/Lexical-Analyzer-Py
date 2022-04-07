@@ -50,6 +50,7 @@ class Globals(Enum):
     ID = "ID"
     RESERVED_ID = "RESERVED_ID"
     EOF = "EOF"
+    COMMENT = "COMMENT"
 
     ZERO = "0"
     LESS_THAN = "<"
@@ -65,6 +66,7 @@ class Globals(Enum):
     PLUS = "+"
     MINUS = "-"
     MULTIPLY = "*"
+    POW = "**"
     VERTICAL_BAR = "|"
     EXCLAMATION_MARK = "!"
     QUESTION_MARK = "?"
