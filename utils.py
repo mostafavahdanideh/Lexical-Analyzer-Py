@@ -8,12 +8,12 @@ LEN_CHARACTER_LIST = globals.LEN_CHARACTER_LIST
         
 
 def write_token(type, value, location):
-    with open("originalfile.outlextokens.txt", "a") as handler:
+    with open("source_code.outlextokens.txt", "a") as handler:
         handler.write(f"<{type}, {value}, {location}>\n")
 
 
 def write_error(type, value, location, error_char):
-    with open("originalfile.outlexerrors.txt", "a") as handler:
+    with open("source_code.outlexerrors.txt", "a") as handler:
         handler.write(f"<{type}, {value}, {location}, {error_char}>\n")
 
 

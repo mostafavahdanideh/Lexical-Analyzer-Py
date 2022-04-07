@@ -7,7 +7,7 @@ def get_characters():
 
     characters_list = list()
 
-    with open("originalfilename.txt", "r") as file_handler:
+    with open("source_code.txt", "r") as file_handler:
         line_number, char_number_in_line = 1, 0
         char = file_handler.read(1)
 
