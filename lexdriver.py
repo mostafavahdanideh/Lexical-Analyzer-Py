@@ -1,18 +1,17 @@
 
-import globals
-from utils import write_error, write_token
-from tokenization import next_token
-
 
 def main():
-    idx = 0
+
+    import globals
+    from utils import write_error, write_token
+    from tokenization import next_token
 
     LEN_CHARACTER_LIST = globals.LEN_CHARACTER_LIST
+    index = globals.pointer_digit
 
-    while idx < LEN_CHARACTER_LIST - 1:
+    while index < LEN_CHARACTER_LIST - 1:
         
-        next_token_tpl = next_token()
-        created_token_obj = next_token_tpl[1]
+        created_token_obj = next_token()
 
         if created_token_obj:
 
@@ -23,7 +22,8 @@ def main():
                 write_token(created_token_obj.token_type,
                             created_token_obj.value, created_token_obj.location)
         
-        idx = next_token_tpl[0]
+        index = globals.pointer_digit
+
 
 if __name__ == "__main__":
     main()

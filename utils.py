@@ -1,19 +1,19 @@
 
 
 import globals
-
+import settings
 
 CHARACTERS_LIST = globals.CHARACTERS_LIST
 LEN_CHARACTER_LIST = globals.LEN_CHARACTER_LIST
         
 
 def write_token(type, value, location):
-    with open("source_code.outlextokens.txt", "a") as handler:
+    with open(settings.outlextokens_file_path(), "a") as handler:
         handler.write(f"<{type}, {value}, {location}>\n")
 
 
 def write_error(type, value, location, error_char):
-    with open("source_code.outlexerrors.txt", "a") as handler:
+    with open(settings.outlexerrors_file_path(), "a") as handler:
         handler.write(f"<{type}, {value}, {location}, {error_char}>\n")
 
 
@@ -50,13 +50,17 @@ def is_nonzero(char):
 
 
 def is_under_line(char):
-    if char == "_":
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 95:
         return True
     return False
 
 
 def is_dot(char):
-    if char == ".":
+    decimal_ascii_code = ord(char)
+    
+    if decimal_ascii_code == 46:
         return True
     return False
 
@@ -66,13 +70,16 @@ def reach_to_special_char(char):
         if char in [";", "{", ":"]:
             break
         elif end_of_chars_list():
-            return "EOF"
+            EOF = globals.Globals.EOF.value
+            return EOF
         char = next_char_tpl()[0]
 
 
 def error_token_location(start_token_pointer, char):
-    if reach_to_special_char(char) == "EOF":
-        character_end_loc = "EOF"
+    EOF = globals.Globals.EOF.value
+
+    if reach_to_special_char(char) == EOF:
+        character_end_loc = EOF
         line_number = CHARACTERS_LIST[start_token_pointer][1]
     else:
         character_end_loc = CHARACTERS_LIST[globals.pointer_digit][2] + 1
@@ -108,7 +115,8 @@ def token_location(start_token_pointer):
 
 
 def make_up_token_value(pre_value, next_value):
-    "concatinating string, id, integer and float value"
+    "Concatinating string, id, integer and float value"
+
     pre_value += next_value
     return pre_value
 
@@ -132,21 +140,52 @@ def next_idx():
 
 
 def is_quotation(char):
-    if char == '"':
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 34:
         return True
     return False
 
 
 def is_space(char):
-    if char == " ":
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 32:
         return True
     return False
 
 
 def is_zero(char):
-    if char == "0":
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 48:
         return True
     return False
+
+
+def is_plus(char):
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 43:
+        return True
+    return False
+
+
+def is_minus(char):
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 45:
+        return True
+    return False
+
+
+def is_e_letter(char):
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 101:
+        return True
+    return False
+
 
 def is_reserved_id(value):
     RESERVED_IDS = globals.RESERVED_IDS
