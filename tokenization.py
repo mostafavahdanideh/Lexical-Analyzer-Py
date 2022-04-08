@@ -14,31 +14,29 @@ CHARACTERS_LIST = globals.CHARACTERS_LIST
 LEN_CHARACTER_LIST = globals.LEN_CHARACTER_LIST
 
 
-class Token:
-    def __init__(self, token_type, value, location, error) -> None:
-        self.token_type = token_type
-        self.value = value
-        self.location = location
-        self.error = error
-
-
-class ErrorToken(Token):
-    def __init__(self, token_type, value, location, error, error_char) -> None:
-        super().__init__(token_type, value, location, error)
-        self.error_char = error_char
-
-
 def error_state(token_type, token_value, error_char):
     "Figure out how to run from error/trap/loop state"
 
     start_token_pointer = globals.pointer_digit
     location_lst = error_state_location(start_token_pointer, error_char)
-    return ErrorToken(token_type, token_value, location_lst, True, error_char)
+    return {
+        "token_type": token_type,
+        "token_value": token_value,
+        "token_location": location_lst,
+        "error_token": True,
+        "error_char": error_char
+    }
 
 
 def final_state(start_token_pointer, token_type, token_value):
     location_tpl = final_state_location(start_token_pointer)
-    return Token(token_type, token_value, location_tpl, False)
+    return {
+        "token_type": token_type,
+        "token_value": token_value,
+        "token_location": location_tpl,
+        "error_token": False,
+        "error_char": None
+    }
 
 
 def id_tokenizer(char):
@@ -188,7 +186,7 @@ def match_float_token(integer_value, next_char):
                     next_char = next_char_tpl()[0]
                     integer_token = match_integer(next_char)
                     if integer_token:
-                        float_value += integer_token.value
+                        float_value += integer_token["token_value"]
                         return final_state(start_token_pointer, FLOAT, float_value)
 
     return error_state(FLOAT, float_value, next_char)

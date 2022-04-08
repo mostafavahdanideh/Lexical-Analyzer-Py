@@ -11,16 +11,16 @@ def main():
 
     while index < LEN_CHARACTER_LIST - 1:
         
-        created_token_obj = next_token()
+        created_token_dict = next_token()
 
-        if created_token_obj:
+        if created_token_dict:
 
-            if created_token_obj.error:
-                write_error(created_token_obj.token_type, created_token_obj.value,
-                            created_token_obj.location, created_token_obj.error_char)
+            if created_token_dict["error_token"]:
+                write_error(created_token_dict["token_type"], created_token_dict["token_value"],
+                            created_token_dict["token_location"], created_token_dict["error_char"])
             else:
-                write_token(created_token_obj.token_type,
-                            created_token_obj.value, created_token_obj.location)
+                write_token(created_token_dict["token_type"],
+                            created_token_dict["token_value"], created_token_dict["token_location"])
         
         index = globals.pointer_digit
 
