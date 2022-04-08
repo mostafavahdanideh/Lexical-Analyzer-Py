@@ -24,6 +24,13 @@ def get_characters():
                 char_number_in_line = 0
 
             char = file_handler.read(1)
+            
+        #We added \n to list so we will be enable to read last char in our list
+        if characters_list[-1] !="\n":
+            characters_list.append((
+                '\n',
+                line_number,
+                char_number_in_line + 1))
 
     return characters_list
 
