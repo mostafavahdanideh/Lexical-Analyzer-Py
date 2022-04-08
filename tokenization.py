@@ -35,8 +35,7 @@ def error_state(token_type, token_value, error_char):
     return ErrorToken(token_type, token_value, location_lst, True, error_char)
 
 
-def final_state(token_type, token_value):
-    start_token_pointer = globals.pointer_digit
+def final_state(start_token_pointer, token_type, token_value):
     location_tpl = final_state_location(start_token_pointer)
     return Token(token_type, token_value, location_tpl, False)
 
@@ -44,14 +43,13 @@ def final_state(token_type, token_value):
 def id_tokenizer(char):
     id_value = char
     token_type = globals.Globals.ID.value
+    start_token_pointer = globals.pointer_digit
 
     while is_digit(char) or is_letter(char) or is_under_line(char):
         char = next_char_tpl()[0]
-
+        id_value = make_up_token_value(id_value, char)
         if end_of_chars_list():
             break
-
-        id_value = make_up_token_value(id_value, char)
 
     if is_invalid_char(char) or is_dot(char):
         return error_state(token_type, id_value, char)
@@ -62,12 +60,13 @@ def id_tokenizer(char):
         RESERVED_ID = globals.Globals.RESERVED_ID.value
         token_type = RESERVED_ID
 
-    return final_state(token_type, id_value)
+    return final_state(start_token_pointer, token_type, id_value)
 
 
 def string_tokenizer(char):
     string_value = char
     STRING = globals.Globals.STRING.value
+    start_token_pointer = globals.pointer_digit
 
     char = next_char_tpl()[0]
     string_value += char
@@ -80,7 +79,7 @@ def string_tokenizer(char):
         return error_state(STRING, string_value, char)
 
     next_idx() # read next char after final quotation
-    return final_state(STRING, string_value)
+    return final_state(start_token_pointer, STRING, string_value)
 
 
 def invalid_character_tokenizer(char):
@@ -93,6 +92,7 @@ def invalid_character_tokenizer(char):
 def match_zero_integer(char):
     INTEGER = globals.Globals.INTEGER.value
     ZERO = globals.Globals.ZERO.value
+    start_token_pointer = globals.pointer_digit
     number_value = char
     char = next_char_tpl()[0]
     number_value += char
@@ -101,11 +101,12 @@ def match_zero_integer(char):
         return error_state(INTEGER, number_value, char)
 
     elif not is_dot(char):
-        return final_state(INTEGER, ZERO)
+        return final_state(start_token_pointer, INTEGER, ZERO)
 
 
 def match_nonzero_integer(char):
     INTEGER = globals.Globals.INTEGER.value
+    start_token_pointer = globals.pointer_digit
     number_value = char
     char = next_char_tpl()[0]
     number_value += char
@@ -119,7 +120,7 @@ def match_nonzero_integer(char):
 
     elif not is_dot(char):
         number_value = number_value[:len(number_value) - 1]
-        return final_state(INTEGER, number_value)
+        return final_state(start_token_pointer, INTEGER, number_value)
 
 
 def get_integer_value_before_dot():
@@ -138,6 +139,7 @@ def get_integer_value_before_dot():
 def match_float_token(integer_value, next_char):
     DOT = globals.Globals.DOT.value
     FLOAT = globals.Globals.FLOAT.value
+    start_token_pointer = globals.pointer_digit - len(integer_value) - 1
     float_value = integer_value + DOT + next_char
     first_char_in_fraction = next_char
 
@@ -176,7 +178,7 @@ def match_float_token(integer_value, next_char):
         if nonzero_flag:
             if not (is_invalid_char(next_char) or is_letter(next_char) or is_dot(next_char)):
                 float_value = float_value[:len(float_value) - 1]
-                return final_state(FLOAT, float_value)
+                return final_state(start_token_pointer, FLOAT, float_value)
 
             elif is_e_letter(next_char):
                 next_char = next_char_tpl()[0]
@@ -186,7 +188,7 @@ def match_float_token(integer_value, next_char):
                     integer_token = match_integer(next_char)
                     if integer_token:
                         float_value += integer_token.value
-                        return final_state(FLOAT, float_value)
+                        return final_state(start_token_pointer, FLOAT, float_value)
 
     return error_state(FLOAT, float_value, next_char)
 
@@ -225,13 +227,14 @@ def multiply_or_pow_tokenizer(char):
     POW = globals.Globals.POW.name
     INVALID_CHAR = globals.Globals.INVALID_CHAR.value
     COMMENT = globals.Globals.COMMENT.value
-
+    start_token_pointer = globals.pointer_digit
     value = char
     char = next_char_tpl()[0]
     value += char
 
     if is_star(char):
-        return final_state(POW, value)
+        next_idx()
+        return final_state(start_token_pointer, POW, value)
     elif is_slash(char):
         char = next_char_tpl()[0]
         while not(is_slash(char)):
@@ -240,18 +243,19 @@ def multiply_or_pow_tokenizer(char):
         
         if is_star(char):
             # when we read star, It means we are in the end of comment and we don't need comment tokens
-            next_idx()  # read next char after final quotation
+            next_idx()  # next char after final quotation
         else:
             return error_state(COMMENT, value, char)
     elif is_invalid_char(char):
         return error_state(INVALID_CHAR, value, char)
     else:
         value = value[:len(value) - 1]
-        return final_state(MULTIPLY, value)
+        return final_state(start_token_pointer, MULTIPLY, value)
 
 
 def division_operator_tokenizer(char):
     DIVISION = globals.Globals.DIVISION.name
+    start_token_pointer = globals.pointer_digit
     op_value = char
     char = next_char_tpl()[0]
 
@@ -262,16 +266,37 @@ def division_operator_tokenizer(char):
         op_value += char
         return error_state(DIVISION, op_value)
     else:
-        return final_state(DIVISION, op_value)
+        return final_state(start_token_pointer, DIVISION, op_value)
+
+
+def less_than_operator_tokenizer(char):
+    start_token_pointer = globals.pointer_digit
+    token_value = char
+    char = next_char_tpl()[0]
+    token_value += char
+
+    if char == "=":
+        next_idx()
+        token_type = globals.Globals.LESS_EQUAL.name
+    elif char == ">":
+        next_idx()
+        token_type = globals.Globals.NOT_EQUAL.name
+    elif is_invalid_char(char):
+        token_type = globals.Globals.INVALID_CHAR.name
+        return error_state(token_type, token_value, char)
+    else:
+        token_type = globals.Globals.LESS_THAN.name
+        token_value = token_value[:len(token_value) - 1]
+    return final_state(start_token_pointer, token_type, token_value)
 
 
 def next_token():
     "Get next token, create then return it."
 
     char = CHARACTERS_LIST[globals.pointer_digit][0]
+    matched_token = None
 
     if is_white_space(char):
-        matched_token = None
         next_idx()
     elif is_invalid_char(char):
         matched_token = invalid_character_tokenizer(char)
@@ -285,9 +310,10 @@ def next_token():
         matched_token = multiply_or_pow_tokenizer(char)
     elif is_slash(char):
         matched_token = division_operator_tokenizer(char)
+    elif char == "<":
+        matched_token = less_than_operator_tokenizer(char)
     else:
         next_idx()
-        matched_token = None
         # UNKNOWN_CHAR = globals.Globals.UNKNOWN_CHAR.value
         # matched_token = error_state(UNKNOWN_CHAR, char, char) # It returns error token
 
