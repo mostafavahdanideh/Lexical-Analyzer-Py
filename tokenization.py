@@ -2,8 +2,9 @@
 
 import globals
 from utils import (error_state_location, final_state_location, is_digit, 
-                    is_letter, is_newline, is_slash, is_star, is_under_line, 
-                    end_of_chars_list, is_white_space, next_char_tpl, next_idx,
+                    is_letter, is_newline, is_operator, is_reserved_special_char, 
+                    is_slash, is_star, is_under_line, next_idx,
+                    end_of_chars_list, is_white_space, next_char_tpl,
                     is_dot, is_quotation, is_invalid_char, is_space,
                     make_up_token_value, is_reserved_id, is_zero, 
                     is_nonzero, is_e_letter, is_minus, is_plus)
@@ -269,25 +270,108 @@ def division_operator_tokenizer(char):
         return final_state(start_token_pointer, DIVISION, op_value)
 
 
-def less_than_operator_tokenizer(char):
+def operator_tokenizer(char):
     start_token_pointer = globals.pointer_digit
-    token_value = char
-    char = next_char_tpl()[0]
-    token_value += char
+    token_value, prev_char = char, char
+    next_char = next_char_tpl()[0]
+    token_value += next_char
 
-    if char == "=":
-        next_idx()
-        token_type = globals.Globals.LESS_EQUAL.name
-    elif char == ">":
-        next_idx()
-        token_type = globals.Globals.NOT_EQUAL.name
-    elif is_invalid_char(char):
-        token_type = globals.Globals.INVALID_CHAR.name
-        return error_state(token_type, token_value, char)
-    else:
-        token_type = globals.Globals.LESS_THAN.name
+    if not is_invalid_char(next_char):
+        if prev_char == globals.Globals.LESS_THAN.value:
+            if  next_char == globals.Globals.ASSIGN.value:
+                next_idx()
+                token_type = globals.Globals.LESS_EQUAL.name
+            elif next_char == globals.Globals.GREATER_THAN.value:
+                next_idx()
+                token_type = globals.Globals.NOT_EQUAL.name
+            else:
+                token_type = globals.Globals.LESS_THAN.name
+                token_value = token_value[:len(token_value) - 1]
+        elif prev_char == globals.Globals.GREATER_THAN.value:
+            if next_char == globals.Globals.ASSIGN.value:
+                next_idx()
+                token_type = globals.Globals.GREATER_EQUAL.name
+            else:
+                token_type = globals.Globals.GREATER_THAN.name
+                token_value = token_value[:len(token_value) - 1]
+        elif prev_char == globals.Globals.ASSIGN.value:
+            if next_char == globals.Globals.ASSIGN.value:
+                next_idx()
+                token_type = globals.Globals.EQUAL.name
+            else:
+                token_type = globals.Globals.ASSIGN.name
+                token_value = token_value[:len(token_value) - 1]
+        elif prev_char == globals.Globals.SINGLE_COLON.value:
+            if next_char == globals.Globals.SINGLE_COLON.value:
+                next_idx()
+                token_type = globals.Globals.DOUBLE_COLON.name
+            else:
+                token_type = globals.Globals.SINGLE_COLON.name
+                token_value = token_value[:len(token_value) - 1]
+        elif prev_char == globals.Globals.PLUS.value:
+                token_type = globals.Globals.PLUS.name
+                token_value = token_value[:len(token_value) - 1]
+        else:
+            token_type = globals.Globals.MINUS.name
+            token_value = token_value[:len(token_value) - 1]
+
+        return final_state(start_token_pointer, token_type, token_value)
+
+    token_type = globals.Globals.INVALID_CHAR.name
+    return error_state(token_type, token_value, next_char)
+
+
+def reserved_special_char_tokenizer(char):
+    start_token_pointer = globals.pointer_digit
+    token_value, prev_char = char, char
+    next_char = next_char_tpl()[0]
+    token_value += next_char
+
+    if not is_invalid_char(next_char):
+        if prev_char == globals.Globals.OPEN_CURLY_BRACKET.value:
+            token_type = globals.Globals.OPEN_CURLY_BRACKET.name
+
+        elif prev_char == globals.Globals.CLOSE_CURLY_BRACKET.value:
+            token_type = globals.Globals.CLOSE_CURLY_BRACKET.name
+
+        elif prev_char == globals.Globals.OPEN_PARENTHESE.value:
+            token_type = globals.Globals.OPEN_PARENTHESE.name
+
+        elif prev_char == globals.Globals.CLOSE_PARENTHESE.value:
+            token_type = globals.Globals.CLOSE_PARENTHESE.name
+
+        elif prev_char == globals.Globals.OPEN_SQUARE_BRACKET.value:
+            token_type = globals.Globals.OPEN_SQUARE_BRACKET.name
+
+        elif prev_char == globals.Globals.CLOSE_SQUARE_BRACKET.value:
+            token_type = globals.Globals.CLOSE_SQUARE_BRACKET.name
+
+        elif prev_char == globals.Globals.QUESTION_MARK.value:
+            token_type = globals.Globals.QUESTION_MARK.name
+
+        elif prev_char == globals.Globals.DOT.value:
+            token_type = globals.Globals.DOT.name
+
+        elif prev_char == globals.Globals.SEMICOLON.value:
+            token_type = globals.Globals.SEMICOLON.name
+
+        elif prev_char == globals.Globals.COMMA.value:
+            token_type = globals.Globals.COMMA.name
+
+        elif prev_char == globals.Globals.AND_MARK.value:
+            token_type = globals.Globals.AND_MARK.name
+
+        elif prev_char == globals.Globals.EXCLAMATION_MARK.value:
+            token_type = globals.Globals.EXCLAMATION_MARK.name
+
+        else:
+            token_type = globals.Globals.VERTICAL_BAR.name
+        
         token_value = token_value[:len(token_value) - 1]
-    return final_state(start_token_pointer, token_type, token_value)
+        return final_state(start_token_pointer, token_type, token_value)
+
+    token_type = globals.Globals.INVALID_CHAR.name
+    return error_state(token_type, token_value, next_char)
 
 
 def next_token():
@@ -310,11 +394,13 @@ def next_token():
         matched_token = multiply_or_pow_tokenizer(char)
     elif is_slash(char):
         matched_token = division_operator_tokenizer(char)
-    elif char == "<":
-        matched_token = less_than_operator_tokenizer(char)
+    elif is_operator(char):
+        matched_token = operator_tokenizer(char)
+    elif is_reserved_special_char(char):
+        matched_token = reserved_special_char_tokenizer(char)
     else:
+        UNKNOWN_CHAR = globals.Globals.UNKNOWN_CHAR.value
+        matched_token = error_state(UNKNOWN_CHAR, char, char)
         next_idx()
-        # UNKNOWN_CHAR = globals.Globals.UNKNOWN_CHAR.value
-        # matched_token = error_state(UNKNOWN_CHAR, char, char) # It returns error token
 
     return matched_token

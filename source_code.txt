@@ -19,4 +19,16 @@ if swap == true:
 skdjfkjsdkf 23898 ssdfsdfkk $#%$#%
 sdljfkdjflksjfl 0932409sdf  /* */ slkfjkjdfl / ; */ 398e asdf /; */ skdj )()(kd) ; /*
 *# ; *; / /? /2 /asd / sdf23 / 2.2 // skjflkjlsfd /*
-< <= <> <! <and <hbo <323 <234.234 <> <> < < < 2.342 <$
+< <= <> <! <and <hbo <323 <234.234 <> <> < < < 2.342 <$; 2>3 ali >= reze >$; : :: :#
+kdjfksljfdlk; + - +4 +$; -@; -safkj
+
+[ & ! | [ ] { } ( ) ; .  , ? [#; % ; ^ sdkfk;
+
+
+
+avg(a, b, c){
+    d = (a + b + c) / 3;
+    if d <> 0:
+        return "It is not zero";
+    return "It is zero"
+}

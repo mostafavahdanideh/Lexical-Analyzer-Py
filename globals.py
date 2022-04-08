@@ -78,6 +78,7 @@ class Globals(Enum):
     VERTICAL_BAR = "|"
     EXCLAMATION_MARK = "!"
     QUESTION_MARK = "?"
+    AND_MARK = "&"
     OPEN_PARENTHESE = "("
     CLOSE_PARENTHESE = ")"
     OPEN_CURLY_BRACKET = "{"

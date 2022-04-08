@@ -19,11 +19,22 @@ def write_error(type, value, location, error_char):
 
 def is_invalid_char(char):
     decimal_ascii_code = ord(char)
-    # invalid chars are -> [#, $, ~, `]
-    if decimal_ascii_code in [35, 36, 126, 96]:
+    # invalid chars are -> [#, $, ~, `, @]
+    if decimal_ascii_code in [35, 36, 126, 96, 64]:
         return True
     return False
 
+
+def is_reserved_special_char(char):
+    if char in ["&", "!", "|", "[", "]", "{", "}", "(", ")", ";", ".", ",", "?"]:
+        return True
+    return False
+
+
+def is_operator(char):
+    if char in ["+", "-", "<", ">", "=", ":"]:
+        return True
+    return False
 
 def is_letter(char):
     decimal_ascii_code = ord(char)
@@ -67,7 +78,7 @@ def is_dot(char):
     return False
 
 
-def reach_to_special_char(char):
+def reach_to_special_char_seperator(char):
     # special chars are -> [";", "{", ":"]
     while char:
         decimal_ascii_code = ord(char)
@@ -87,7 +98,7 @@ def error_state_location(start_token_pointer, char):
     begin_line_number = CHARACTERS_LIST[start_token_pointer][1]
     character_start_loc = CHARACTERS_LIST[start_token_pointer][2] + 1
 
-    if reach_to_special_char(char) == EOF:
+    if reach_to_special_char_seperator(char) == EOF:
         character_end_loc = EOF
     else:
         character_end_loc = CHARACTERS_LIST[globals.pointer_digit][2] + 1
