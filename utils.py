@@ -82,30 +82,24 @@ def reach_to_special_char(char):
         char = next_char_tpl()[0]
 
 
-def error_token_location(start_token_pointer, char):
+def error_state_location(start_token_pointer, char):
     EOF = globals.Globals.EOF.value
+    begin_line_number = CHARACTERS_LIST[start_token_pointer][1]
+    character_start_loc = CHARACTERS_LIST[start_token_pointer][2] + 1
 
     if reach_to_special_char(char) == EOF:
         character_end_loc = EOF
-        line_number = CHARACTERS_LIST[start_token_pointer][1]
     else:
         character_end_loc = CHARACTERS_LIST[globals.pointer_digit][2] + 1
-        line_number = CHARACTERS_LIST[globals.pointer_digit][1]
 
-    character_start_loc = CHARACTERS_LIST[start_token_pointer][2] + 1
-        
-    character_location_in_line = (
-        character_start_loc,
-        character_end_loc)
-
-    location_tpl = (
-        line_number,
-        character_location_in_line)
+    end_line_number = CHARACTERS_LIST[globals.pointer_digit][1]
+    character_location = [(begin_line_number, character_start_loc),
+                            (end_line_number, character_end_loc)]
     
-    return location_tpl
+    return character_location
 
 
-def token_location(start_token_pointer):
+def final_state_location(start_token_pointer):
     line_number = CHARACTERS_LIST[globals.pointer_digit][1]
     character_start_loc = CHARACTERS_LIST[start_token_pointer][2] + 1
     character_end_loc = CHARACTERS_LIST[globals.pointer_digit][2]

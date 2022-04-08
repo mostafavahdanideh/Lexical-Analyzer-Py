@@ -4,7 +4,7 @@ ali_mvd "ali   1234"$
 "mosatsdfj 234   "; 32434 sdlkfj$ "; if main public else "sddf & slfj348;
 0 123asf 0 0234df { 0234; 0#; 1~: 1111.324 0.0 0.111 0.000010000101 0.111123211.;
 0.?111123211%; 123.342e+324 0.234e*234; 0.0000e+2324; 19.23400e-34 0.00000; 10.1230 sdf32 {
-
+"I am a window"
 if swap == true:
     main(){
         return "hello world";
