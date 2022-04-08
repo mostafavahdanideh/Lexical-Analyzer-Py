@@ -211,3 +211,23 @@ def is_slash(char):
     if decimal_ascii_code == 47:
         return True
     return False
+
+
+def is_newline(char):
+    "Check we have line feed/newline or not"
+
+    decimal_ascii_code = ord(char)
+
+    if decimal_ascii_code == 10:
+        return True
+    return False
+
+
+def is_white_space(char):
+    decimal_ascii_code = ord(char)
+
+    # whitespace -> [ht(\t), nl(\n), vt, sp]
+
+    if decimal_ascii_code in [9, 10, 11, 32]:
+        return True
+    return False

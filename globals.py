@@ -51,6 +51,7 @@ class Globals(Enum):
     RESERVED_ID = "RESERVED_ID"
     EOF = "EOF"
     COMMENT = "COMMENT"
+    UNKNOWN_CHAR = "UNKNOWN_CHAR"
 
     ZERO = "0"
     LESS_THAN = "<"
@@ -62,7 +63,7 @@ class Globals(Enum):
     ASSIGN = "="
     EQUAL = "=="
     NOT_EQUAL = "<>"
-    DIVIDER = "/"
+    DIVISION = "/"
     PLUS = "+"
     MINUS = "-"
     MULTIPLY = "*"

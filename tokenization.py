@@ -2,8 +2,8 @@
 
 import globals
 from utils import (error_state_location, final_state_location, is_digit, 
-                    is_letter, is_slash, is_star, is_under_line, 
-                    end_of_chars_list, next_char_tpl, next_idx,
+                    is_letter, is_newline, is_slash, is_star, is_under_line, 
+                    end_of_chars_list, is_white_space, next_char_tpl, next_idx,
                     is_dot, is_quotation, is_invalid_char, is_space,
                     make_up_token_value, is_reserved_id, is_zero, 
                     is_nonzero, is_e_letter, is_minus, is_plus)
@@ -29,7 +29,7 @@ class ErrorToken(Token):
 
 def error_state(token_type, token_value, error_char):
     "Figure out how to run from error/trap/loop state"
-    
+
     start_token_pointer = globals.pointer_digit
     location_lst = error_state_location(start_token_pointer, error_char)
     return ErrorToken(token_type, token_value, location_lst, True, error_char)
@@ -41,7 +41,7 @@ def final_state(token_type, token_value):
     return Token(token_type, token_value, location_tpl, False)
 
 
-def match_id_token(char):
+def id_tokenizer(char):
     id_value = char
     token_type = globals.Globals.ID.value
 
@@ -65,7 +65,7 @@ def match_id_token(char):
     return final_state(token_type, id_value)
 
 
-def match_string_token(char):
+def string_tokenizer(char):
     string_value = char
     STRING = globals.Globals.STRING.value
 
@@ -83,11 +83,10 @@ def match_string_token(char):
     return final_state(STRING, string_value)
 
 
-def match_invalid_chars(char):
+def invalid_character_tokenizer(char):
     INVALID_CHAR = globals.Globals.INVALID_CHAR.value
     start_token_pointer = globals.pointer_digit
     invalid_char_value = CHARACTERS_LIST[start_token_pointer][0]
-
     return error_state(INVALID_CHAR, invalid_char_value, char)
 
 
@@ -202,8 +201,8 @@ def match_integer(char):
     return token
 
 
-def match_number_token(char):
-    "Match interger or float number"
+def rational_number_tokenizer(char):
+    "Match interger, float and natural number"
 
     integer_token = match_integer(char)
     
@@ -219,7 +218,7 @@ def match_number_token(char):
         return match_float_token(integer_value_before_dot, char)
 
 
-def match_pow_or_multiply(char):
+def multiply_or_pow_tokenizer(char):
     "Match multiply or pow"
 
     MULTIPLY = globals.Globals.MULTIPLY.name
@@ -235,10 +234,8 @@ def match_pow_or_multiply(char):
         return final_state(POW, value)
     elif is_slash(char):
         char = next_char_tpl()[0]
-
         while not(is_slash(char)):
             char = next_char_tpl()[0]
-
         char = next_char_tpl()[0]
         
         if is_star(char):
@@ -253,23 +250,45 @@ def match_pow_or_multiply(char):
         return final_state(MULTIPLY, value)
 
 
+def division_operator_tokenizer(char):
+    DIVISION = globals.Globals.DIVISION.name
+    op_value = char
+    char = next_char_tpl()[0]
+
+    if is_slash(char):
+        while not (is_newline(char) or end_of_chars_list()):
+            char = next_char_tpl()[0]
+    elif is_invalid_char(char):
+        op_value += char
+        return error_state(DIVISION, op_value)
+    else:
+        return final_state(DIVISION, op_value)
+
+
 def next_token():
     "Get next token, create then return it."
 
     char = CHARACTERS_LIST[globals.pointer_digit][0]
 
-    if is_letter(char):
-        matched_token = match_id_token(char)
+    if is_white_space(char):
+        matched_token = None
+        next_idx()
     elif is_invalid_char(char):
-        matched_token = match_invalid_chars(char)
+        matched_token = invalid_character_tokenizer(char)
+    elif is_letter(char):
+        matched_token = id_tokenizer(char)
     elif is_quotation(char):
-        matched_token = match_string_token(char)
+        matched_token = string_tokenizer(char)
     elif is_digit(char):
-        matched_token = match_number_token(char)
+        matched_token = rational_number_tokenizer(char)
     elif is_star(char):
-        matched_token = match_pow_or_multiply(char)
+        matched_token = multiply_or_pow_tokenizer(char)
+    elif is_slash(char):
+        matched_token = division_operator_tokenizer(char)
     else:
         next_idx()
         matched_token = None
+        # UNKNOWN_CHAR = globals.Globals.UNKNOWN_CHAR.value
+        # matched_token = error_state(UNKNOWN_CHAR, char, char) # It returns error token
 
     return matched_token
