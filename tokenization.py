@@ -28,6 +28,8 @@ class ErrorToken(Token):
 
 
 def error_state(token_type, token_value, error_char):
+    "Figure out how to run from error/trap/loop state"
+    
     start_token_pointer = globals.pointer_digit
     location_lst = error_state_location(start_token_pointer, error_char)
     return ErrorToken(token_type, token_value, location_lst, True, error_char)
